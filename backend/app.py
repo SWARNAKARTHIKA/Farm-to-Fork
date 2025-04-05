@@ -47,6 +47,45 @@ def register():
     db.collection('users').add(user)
 
     return jsonify({"message": "User registered successfully!"})
+@app.route('/add_crop', methods=['POST'])
+def add_crop():
+    form_data = request.form
+    land_record = request.files.get('land_record')
+    field_photo = request.files.get('field_photo')
+
+    # Save uploaded files
+    land_record_filename = secure_filename(land_record.filename) if land_record else None
+    field_photo_filename = secure_filename(field_photo.filename) if field_photo else None
+    
+    if land_record:
+        land_record_path = os.path.join(app.config['UPLOAD_FOLDER'], land_record_filename)
+        land_record.save(land_record_path)
+    if field_photo:
+        field_photo_path = os.path.join(app.config['UPLOAD_FOLDER'], field_photo_filename)
+        field_photo.save(field_photo_path)
+
+    # Construct crop data
+    crop = {
+        'crop_type': form_data['crop_type'],
+        'variety': form_data['variety'],
+        'sowing_date': form_data['sowing_date'],
+        'expected_harvest_date': form_data['expected_harvest_date'],
+        'total_land_area': form_data['total_land_area'],
+        'expected_yield': form_data['expected_yield'],
+        'historical_yield': form_data['historical_yield'],
+        'irrigation_source': form_data['irrigation_source'],
+        'fertilizer_pesticide_use': form_data['fertilizer_pesticide_use'],
+        'token_quantity_kg': form_data['token_quantity_kg'],
+        'token_price_per_kg': form_data['token_price_per_kg'],
+        'min_purchase_quantity': form_data['min_purchase_quantity'],
+        'land_record_path': land_record_path if land_record else None,
+        'field_photo_path': field_photo_path if field_photo else None,
+    }
+
+    # Store crop data in Firestore
+    db.collection('crops').add(crop)
+
+    return jsonify({"message": "Crop data added successfully!"})
 
 if __name__ == '__main__':
     app.run(debug=True)
