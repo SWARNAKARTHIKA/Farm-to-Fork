@@ -4,19 +4,26 @@ from werkzeug.utils import secure_filename
 import os
 import json
 import firebase_admin
+from dotenv import load_dotenv
 from firebase_admin import credentials, firestore
+from routes.product_routes import crop_bp  # Import crop blueprint
+#from user_routes import user_bp  # Import user blueprint
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-# Upload folder
+# Upload folder setup
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Firebase Admin Initialization using JSON from env variable
 cred_dict = json.loads(os.environ["FIREBASE_CONFIG"])
-cred = credentials.Certificate(cred_dict)
-firebase_admin.initialize_app(cred)
+# Check if Firebase app is already initialized
+if not firebase_admin._apps:
+    cred = credentials.Certificate(cred_dict)
+    firebase_admin.initialize_app(cred)
 
 # Firestore client
 db = firestore.client()
@@ -47,6 +54,10 @@ def register():
     db.collection('users').add(user)
 
     return jsonify({"message": "User registered successfully!"})
+
+# Register the blueprints
+#app.register_blueprint(user_bp, url_prefix='/api')  # Register the user blueprint with '/api' prefix
+app.register_blueprint(crop_bp, url_prefix='/api')  # Register the crop blueprint with '/api' prefix
 
 if __name__ == '__main__':
     app.run(debug=True)
