@@ -1,7 +1,24 @@
 import React from 'react';
 import { FaUserCircle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const FarmerDashboard = () => {
+  const navigate = useNavigate();
+
+  const handleCardClick = (index) => {
+    if (index === 0) {
+      navigate('/add-harvest'); // 🔗 Route to AddHarvestData page
+    }
+    // You can add more `if` statements for other cards later
+  };
+
+  const cardTexts = [
+    'Add Harvest Data',
+    'Update Yield Info',
+    'View My Harvests',
+    'Connect with Vendors'
+  ];
+
   return (
     <div style={{ padding: '30px', height: '100vh', boxSizing: 'border-box', backgroundColor: '#f0fdf4' }}>
       {/* Header */}
@@ -16,18 +33,14 @@ const FarmerDashboard = () => {
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '40px',
-          paddingLeft: '20px',   // ← Left margin
-          paddingRight: '20px',  // ← Right margin
+          paddingLeft: '20px',
+          paddingRight: '20px',
         }}
       >
-        {[
-          'Add Crop Details',
-          'Update Crop Details',
-          'View My Crops',
-          'Select Vendor'
-        ].map((text, index) => (
+        {cardTexts.map((text, index) => (
           <div
             key={index}
+            onClick={() => handleCardClick(index)}
             style={{
               width: '100%',
               height: '140px',
@@ -41,6 +54,7 @@ const FarmerDashboard = () => {
               fontWeight: 'bold',
               borderRadius: '12px',
               boxShadow: '0 6px 12px rgba(0,0,0,0.1)',
+              cursor: index === 0 ? 'pointer' : 'default', // Only first box is clickable
             }}
           >
             {text}
