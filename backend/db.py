@@ -1,7 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-cred = credentials.Certificate("serviceAccountKey.json")  # replace with your actual file if renamed
+cred = credentials.Certificate("serviceAccountKey.json")  
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
@@ -11,71 +11,61 @@ crops = [
         "type": "Tomato",
         "available_qty": 150,
         "available_tokens": 30,
-        "price_per_token": 20,
-        "vendor_id": "vendor_001"
+        "price_per_token": 20
     },
     {
         "type": "Basmati Rice",
         "available_qty": 500,
         "available_tokens": 100,
-        "price_per_token": 50,
-        "vendor_id": "vendor_002"
+        "price_per_token": 50
     },
     {
         "type": "Potato",
         "available_qty": 300,
         "available_tokens": 60,
-        "price_per_token": 15,
-        "vendor_id": None
+        "price_per_token": 15
     },
     {
         "type": "Carrot",
         "available_qty": 120,
         "available_tokens": 25,
-        "price_per_token": 18,
-        "vendor_id": "vendor_003"
+        "price_per_token": 18
     },
     {
         "type": "Wheat",
         "available_qty": 1000,
         "available_tokens": 200,
-        "price_per_token": 40,
-        "vendor_id": "vendor_004"
+        "price_per_token": 40
     },
     {
         "type": "Brinjal",
         "available_qty": 100,
         "available_tokens": 20,
-        "price_per_token": 16,
-        "vendor_id": None
+        "price_per_token": 16
     },
     {
         "type": "Onion",
         "available_qty": 250,
         "available_tokens": 50,
-        "price_per_token": 12,
-        "vendor_id": "vendor_005"
+        "price_per_token": 12
     },
     {
         "type": "Chili",
         "available_qty": 80,
         "available_tokens": 16,
-        "price_per_token": 22,
-        "vendor_id": "vendor_001"
+        "price_per_token": 22
     },
     {
         "type": "Maize",
         "available_qty": 700,
         "available_tokens": 140,
-        "price_per_token": 30,
-        "vendor_id": None
+        "price_per_token": 30
     },
     {
         "type": "Cabbage",
         "available_qty": 90,
         "available_tokens": 18,
-        "price_per_token": 14,
-        "vendor_id": "vendor_006"
+        "price_per_token": 14
     }
 ]
 

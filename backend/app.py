@@ -7,11 +7,11 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 # Import Blueprints
-from routes.auth_routes import auth_bp
+#from routes.auth_routes import auth_bp
 from routes.product_routes import product_bp
-from routes.buyer_routes import buyer_bp
+#from routes.buyer_routes import buyer_bp
 #from routes.ledger_routes import ledger_bp
-from routes.vendor_routes import vendor_bp
+#from routes.vendor_routes import vendor_bp
 
 app = Flask(__name__)
 CORS(app)
@@ -20,20 +20,16 @@ CORS(app)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Firebase Admin Initialization using JSON from env variable
-cred_dict = json.loads(os.environ["FIREBASE_CONFIG"])
-cred = credentials.Certificate(cred_dict)
-firebase_admin.initialize_app(cred)
 
 # Firestore client
 db = firestore.client()
 
 # Register Blueprints
-app.register_blueprint(auth_bp, url_prefix='/api')
+#app.register_blueprint(auth_bp, url_prefix='/api')
 app.register_blueprint(product_bp, url_prefix='/api')
-app.register_blueprint(buyer_bp, url_prefix='/api')
+#app.register_blueprint(buyer_bp, url_prefix='/api')
 #app.register_blueprint(ledger_bp, url_prefix='/api')
-app.register_blueprint(vendor_bp, url_prefix='/api')
+#app.register_blueprint(vendor_bp, url_prefix='/api')
 
 @app.route('/register', methods=['POST'])
 def register():
