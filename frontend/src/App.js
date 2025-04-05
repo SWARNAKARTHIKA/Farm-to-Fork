@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import FarmerDashboard from './pages/FarmerDashboard';
+import AddHarvestData from './pages/AddHarvestData'; 
 
 const Home = () => {
   const navigate = useNavigate();
@@ -11,19 +12,28 @@ const Home = () => {
     <div
       style={{
         height: '100vh',
-        background: 'radial-gradient(circle at center, #bbf7d0 0%, #065f46 100%)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
+        width: '100vw',
+        backgroundImage: 'url("/home1.jpg")', // Make sure image is in public/
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        position: 'relative',
         color: 'white',
         textAlign: 'center',
       }}
     >
-      <h1 style={{ fontSize: '3rem', marginBottom: '40px' }}>FARM TO FORK</h1>
-      
-      {/* Button Row */}
-      <div style={{ display: 'flex', gap: '20px' }}>
+    
+
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '30px',
+          right: '30px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '15px',
+        }}
+      >
         <button
           onClick={() => navigate('/signup')}
           style={{
@@ -58,6 +68,7 @@ const Home = () => {
   );
 };
 
+
 function App() {
   return (
     <Router>
@@ -66,6 +77,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/farmer-dashboard" element={<FarmerDashboard />} />
+        <Route path="/add-harvest" element={<AddHarvestData />} />
         {/* Add other routes here */}
       </Routes>
     </Router>
