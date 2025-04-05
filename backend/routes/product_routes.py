@@ -1,12 +1,15 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
 import os
-from config import *  # Firebase initialization
-from firebase_admin import firestore
+from firebase_admin import firestore, credentials, initialize_app
+
+# Initialize Firebase
+cred = credentials.Certificate("serviceAccountKey.json")
+initialize_app(cred)
+db = firestore.client()
 
 # Blueprint setup
 crop_bp = Blueprint('crop_routes', __name__)
-db = firestore.client()
 
 UPLOAD_FOLDER = 'uploads'  # Folder to save uploaded files
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -34,7 +37,7 @@ def add_crop():
         field_photo_path = os.path.join(UPLOAD_FOLDER, field_photo_filename)
         field_photo.save(field_photo_path)
 
-    # Prepare the user data to store in Firestore
+    # Prepare the crop data to store in Firestore
     crop_data = {
         'crop_type': form_data.get('cropType'),
         'variety': form_data.get('variety'),
@@ -53,8 +56,24 @@ def add_crop():
     }
 
     try:
-        # Add the crop data to Firestore
+        # Add the crop data to Firestore in 'harvest' collection
         db.collection('harvest').add(crop_data)
         return jsonify({"message": "Crop data submitted successfully!"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# Add a route to retrieve the crop details
+@crop_bp.route('/get_crops', methods=['GET'])
+def get_crops():
+    try:
+        crops_ref = db.collection('harvest')
+        crops = crops_ref.stream()
+        crops_list = []
+
+        for crop in crops:
+            crops_list.append(crop.to_dict())
+
+        return jsonify(crops_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
