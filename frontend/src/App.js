@@ -1,67 +1,74 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import FarmerDashboard from './pages/FarmerDashboard';
 
-function App() {
-  const [form, setForm] = useState({
-    username: '',
-    password: '',
-    mobile: '',
-    location: '',
-    city: '',
-    state: '',
-    role: 'farmer',
-    id_proof: null
-  });
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'id_proof') {
-      setForm({ ...form, id_proof: files[0] });
-    } else {
-      setForm({ ...form, [name]: value });
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    for (const key in form) {
-      formData.append(key, form[key]);
-    }
-
-    try {
-      const res = await fetch('https://farm-to-fork-30r2.onrender.com/register', {
-        method: 'POST',
-        body: formData,
-      });
-      const result = await res.json();
-      alert(result.message);
-    } catch (err) {
-      alert("Error submitting form!");
-      console.error(err);
-    }
-  };
+const Home = () => {
+  const navigate = useNavigate();
 
   return (
-    <div style={{ padding: 20, maxWidth: 400, margin: 'auto' }}>
-      <h2>Farm to Fork - Register</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="username" placeholder="Username" onChange={handleChange} required /><br />
-        <input name="password" placeholder="Password" type="password" onChange={handleChange} required /><br />
-        <input name="mobile" placeholder="Mobile No." onChange={handleChange} required /><br />
-        <input name="location" placeholder="Location" onChange={handleChange} required /><br />
-        <input name="city" placeholder="City" onChange={handleChange} required /><br />
-        <input name="state" placeholder="State" onChange={handleChange} required /><br />
+    <div
+      style={{
+        height: '100vh',
+        background: 'radial-gradient(circle at center, #bbf7d0 0%, #065f46 100%)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        color: 'white',
+        textAlign: 'center',
+      }}
+    >
+      <h1 style={{ fontSize: '3rem', marginBottom: '40px' }}>FARM TO FORK</h1>
+      
+      {/* Button Row */}
+      <div style={{ display: 'flex', gap: '20px' }}>
+        <button
+          onClick={() => navigate('/signup')}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: 'white',
+            color: '#065f46',
+            fontWeight: 'bold',
+            border: 'none',
+            borderRadius: '30px',
+            cursor: 'pointer',
+          }}
+        >
+          Sign Up
+        </button>
 
-        <select name="role" onChange={handleChange}>
-          <option value="farmer">Farmer</option>
-          <option value="vendor">Vendor</option>
-          <option value="consumer">Consumer</option>
-        </select><br /><br />
-
-        <input type="file" name="id_proof" onChange={handleChange} required /><br /><br />
-        <button type="submit">Register</button>
-      </form>
+        <button
+          onClick={() => navigate('/Login')}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: 'white',
+            color: '#065f46',
+            fontWeight: 'bold',
+            border: 'none',
+            borderRadius: '30px',
+            cursor: 'pointer',
+          }}
+        >
+          Login
+        </button>
+      </div>
     </div>
+  );
+};
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/farmer-dashboard" element={<FarmerDashboard />} />
+        {/* Add other routes here */}
+      </Routes>
+    </Router>
   );
 }
 
