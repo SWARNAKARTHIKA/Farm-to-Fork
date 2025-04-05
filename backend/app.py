@@ -4,10 +4,7 @@ from werkzeug.utils import secure_filename
 import os
 import json
 import firebase_admin
-from firebase_admin import credentials, firestore
-from dotenv import load_dotenv
-
-load_dotenv()
+from firebase_admin import credentials, firestore, auth
 
 app = Flask(__name__)
 CORS(app)
@@ -50,6 +47,7 @@ def register():
     db.collection('users').add(user)
 
     return jsonify({"message": "User registered successfully!"})
+
 @app.route('/add_crop', methods=['POST'])
 def add_crop():
     form_data = request.form
@@ -86,9 +84,35 @@ def add_crop():
     }
 
     # Store crop data in Firestore
-    db.collection('harvest').add(crop)
+    db.collection('crops').add(crop)
 
     return jsonify({"message": "Crop data added successfully!"})
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    # Retrieve user from Firestore by username
+    users_ref = db.collection('users')
+    query = users_ref.where('username', '==', username).where('password', '==', password).limit(1)
+    results = query.stream()
+
+    user = None
+    for doc in results:
+        user = doc.to_dict()
+
+    if user:
+        # If user is found, authenticate using Firebase Admin SDK
+        try:
+            # In a real scenario, you would use Firebase Authentication to verify credentials
+            # Here, we simulate it by assuming the user is valid if they exist in Firestore.
+            return jsonify({"message": "Login successful!", "user": user})
+        except Exception as e:
+            return jsonify({"message": f"Authentication failed: {str(e)}"}), 400
+    else:
+        return jsonify({"message": "Invalid username or password"}), 401
 
 if __name__ == '__main__':
     app.run(debug=True)
