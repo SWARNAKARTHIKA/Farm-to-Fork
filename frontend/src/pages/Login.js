@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom'; // Uncomment when enabling redirect
+import { useNavigate } from 'react-router-dom';
+import BASE_URL from './config'; // Make sure BASE_URL is correctly defined in this file
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -7,7 +8,7 @@ const Login = () => {
     password: '',
   });
 
-  // const navigate = useNavigate(); // Uncomment when enabling redirect
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,8 +18,10 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log('Sending credentials:', credentials); // Debug log
+
     try {
-      const res = await fetch('https://farm-to-fork-30r2.onrender.com/login', {
+      const res = await fetch(`${BASE_URL}/register/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,13 +32,12 @@ const Login = () => {
       const result = await res.json();
       alert(result.message);
 
-      // if (result.success) {
-      //   navigate('/farmer-dashboard'); // Navigate to farmer dashboard
-      // }
-
+      if (result.success) {
+        navigate('/farmer-dashboard');
+      }
     } catch (err) {
-      alert("Login failed!");
-      console.error(err);
+      alert('Login failed!');
+      console.error('Login error:', err);
     }
   };
 
@@ -43,7 +45,7 @@ const Login = () => {
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#eafbe6', // 🌿 Very light green background
+        backgroundColor: '#eafbe6', // Very light green
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -55,14 +57,15 @@ const Login = () => {
           padding: '40px',
           maxWidth: '400px',
           width: '100%',
-         // backgroundColor: '#a0d9a0', // Main login box
           borderRadius: '15px',
-         // boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
           fontFamily: 'Arial, sans-serif',
           color: '#065f46',
         }}
       >
-        <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Farm to Fork - Login</h2>
+        <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>
+          Farm to Fork - Login
+        </h2>
+
         <form onSubmit={handleSubmit}>
           <input
             name="username"
