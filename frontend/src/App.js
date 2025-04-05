@@ -16,41 +16,40 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    console.log('Sending credentials:', credentials); // Debug log
+  console.log('Sending credentials:', credentials); // Debug log
 
-    try {
-      const res = await fetch(`${BASE_URL}/register/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
+  try {
+    const res = await fetch(`${BASE_URL}/register/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    });
 
-      const result = await res.json();
-      alert(result.message);
+    const result = await res.json();
+    alert(result.message);
 
-      if (result.success) {
+    if (result.success) {
+      const role = result.role?.toLowerCase(); // safely get and lowercase the role
 
-
-        const role = result.role?.toLowerCase(); // safely get and lowercase the role
-        if (role === 'farmer') {
-          navigate('/farmer-dashboard');
-        } else if (role === 'vendor') {
-          navigate('/vendor-dashboard');
-        } else if (role === 'consumer') {
-          navigate('/consumer-dashboard');
-        } else {
-          alert('Unknown user role!');
-        }
+      if (role === 'farmer') {
+        navigate('/farmer-dashboard');
+      } else if (role === 'vendor') {
+        navigate('/vendor-dashboard');
+      } else if (role === 'consumer') {
+        navigate('/consumer-dashboard');
+      } else {
+        alert('Unknown user role!');
       }
-     catch (err) {
-      alert('Login failed!');
-      console.error('Login error:', err);
     }
-  };
+  } catch (err) {
+    alert('Login failed!');
+    console.error('Login error:', err);
+  }
+};
 
   return (
     <div
