@@ -86,7 +86,7 @@ def add_crop():
     }
 
     # Store crop data in Firestore
-    db.collection('crops').add(crop)
+    db.collection('harvest').add(crop)
 
     return jsonify({"message": "Crop data added successfully!"})
 
