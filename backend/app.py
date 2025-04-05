@@ -88,7 +88,7 @@ def add_crop():
 
     return jsonify({"message": "Crop data added successfully!"})
 
-@app.route('/login', methods=['POST'])
+@app.route('/register/login', methods=['POST'])
 def login():
     data = request.get_json()
     username = data.get('username')
