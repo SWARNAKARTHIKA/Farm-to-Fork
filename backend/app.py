@@ -154,5 +154,21 @@ def register_vendor():
     except Exception as e:
         return jsonify({"message": f"Error occurred: {str(e)}"}), 500
         
+@app.route('/select_vendor', methods=['GET'])
+def select_vendor():
+    try:
+        # Optional: filter vendors who offer pickup service
+        vendors_ref = db.collection('vendor_details').where('pickup', '==', True)
+        docs = vendors_ref.stream()
+
+        vendors = []
+        for doc in docs:
+            data = doc.to_dict()
+            data['id'] = doc.id  # optional: include Firestore document ID
+            vendors.append(data)
+
+        return jsonify({"vendors": vendors}), 200
+    except Exception as e:
+        return jsonify({"message": f"Failed to fetch vendor data: {str(e)}"}), 500
 if __name__ == '__main__':
     app.run(debug=True)
