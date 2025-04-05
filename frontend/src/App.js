@@ -8,6 +8,7 @@ import VendorRegistrationForm from './pages/VendorRegistrationForm';
 import ConsumerDashboard from './pages/ConsumerDashboard';
 import VendorDashboard from './pages/VendorDashboard';
 import BASE_URL from './config'; // Make sure BASE_URL is correctly defined in this file
+import VendorList from './pages/VendorList';
 
 const Home = () => {  
   const navigate = useNavigate();
@@ -85,6 +86,7 @@ function App() {
         <Route path="/vendor-registration" element={<VendorRegistrationForm />} />
         <Route path="/consumer-dashboard" element={<ConsumerDashboard />} />
         <Route path="/vendor-dashboard" element={<VendorDashboard />} />    
+        <Route path="/vendor-list" element={<VendorList />} />
         {/* Add other routes here */}
       </Routes>
     </Router>
