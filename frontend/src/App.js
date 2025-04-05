@@ -4,6 +4,7 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import FarmerDashboard from './pages/FarmerDashboard';
 import AddHarvestData from './pages/AddHarvestData'; 
+import VendorRegistrationForm from './pages/VendorRegistrationForm';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -78,6 +79,7 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/farmer-dashboard" element={<FarmerDashboard />} />
         <Route path="/add-harvest" element={<AddHarvestData />} />
+        <Route path="/vendor-registration" element={<VendorRegistrationForm />} />
         {/* Add other routes here */}
       </Routes>
     </Router>
