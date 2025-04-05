@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 const FarmerDashboard = () => {
   const navigate = useNavigate();
 
-  const handleCardClick = (index) => {
+ const handleCardClick = (index) => {
     if (index === 0) {
-      navigate('/add-harvest'); // 🔗 Route to AddHarvestData page
+      navigate('/add-harvest');
+    } else if (index === 3) {
+      navigate('/vendor-list'); // 🔗 Route to VendorList page
     }
-    // You can add more `if` statements for other cards later
   };
-
   const cardTexts = [
     'Add Harvest Data',
     'Update Yield Info',
