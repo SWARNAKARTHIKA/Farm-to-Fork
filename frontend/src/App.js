@@ -1,137 +1,94 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import FarmerDashboard from './pages/FarmerDashboard';
+import AddHarvestData from './pages/AddHarvestData'; 
+import VendorRegistrationForm from './pages/VendorRegistrationForm';
+import ConsumerDashboard from './pages/ConsumerDashboard';
+import VendorDashboard from './pages/VendorDashboard';
 import BASE_URL from './config'; // Make sure BASE_URL is correctly defined in this file
 
-const Login = () => {
-  const [credentials, setCredentials] = useState({
-    username: '',
-    password: '',
-  });
-
+const Home = () => {  
   const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials({ ...credentials, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  console.log('Sending credentials:', credentials); // Debug log
-
-  try {
-    const res = await fetch(`${BASE_URL}/register/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
-
-    const result = await res.json();
-    alert(result.message);
-
-    if (result.success) {
-      const role = result.role?.toLowerCase(); // safely get and lowercase the role
-
-      if (role === 'farmer') {
-        navigate('/farmer-dashboard');
-      } else if (role === 'vendor') {
-        navigate('/vendor-dashboard');
-      } else if (role === 'consumer') {
-        navigate('/consumer-dashboard');
-      } else {
-        alert('Unknown user role!');
-      }
-    }
-  } catch (err) {
-    alert('Login failed!');
-    console.error('Login error:', err);
-  }
-};
 
   return (
     <div
       style={{
-        minHeight: '100vh',
-        backgroundColor: '#eafbe6', // Very light green
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '20px',
+        height: '100vh',
+        width: '100vw',
+        backgroundImage: 'url("/home1.jpg")', // Make sure image is in public/
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        position: 'relative',
+        color: 'white',
+        textAlign: 'center',
       }}
     >
+    
+
       <div
         style={{
-          padding: '40px',
-          maxWidth: '400px',
-          width: '100%',
-          borderRadius: '15px',
-          fontFamily: 'Arial, sans-serif',
-          color: '#065f46',
+          position: 'absolute',
+          bottom: '30px',
+          right: '30px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '15px',
         }}
       >
-        <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>
-          Farm to Fork - Login
-        </h2>
+        <button
+          onClick={() => navigate('/signup')}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: 'white',
+            color: '#065f46',
+            fontWeight: 'bold',
+            border: 'none',
+            borderRadius: '30px',
+            cursor: 'pointer',
+          }}
+        >
+          Sign Up
+        </button>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            name="username"
-            placeholder="Username"
-            value={credentials.username}
-            onChange={handleChange}
-            required
-            style={{
-              width: '100%',
-              padding: '10px',
-              marginBottom: '20px',
-              border: '1px solid #065f46',
-              borderRadius: '8px',
-              outline: 'none',
-            }}
-          />
-
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={credentials.password}
-            onChange={handleChange}
-            required
-            style={{
-              width: '100%',
-              padding: '10px',
-              marginBottom: '20px',
-              border: '1px solid #065f46',
-              borderRadius: '8px',
-              outline: 'none',
-            }}
-          />
-
-          <button
-            type="submit"
-            style={{
-              width: '100%',
-              padding: '12px',
-              backgroundColor: '#065f46',
-              color: 'white',
-              fontWeight: 'bold',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              transition: 'background-color 0.3s ease',
-            }}
-            onMouseOver={(e) => (e.target.style.backgroundColor = '#054e3b')}
-            onMouseOut={(e) => (e.target.style.backgroundColor = '#065f46')}
-          >
-            Login
-          </button>
-        </form>
+        <button
+          onClick={() => navigate('/Login')}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: 'white',
+            color: '#065f46',
+            fontWeight: 'bold',
+            border: 'none',
+            borderRadius: '30px',
+            cursor: 'pointer',
+          }}
+        >
+          Login
+        </button>
       </div>
     </div>
   );
 };
 
-export default Login;
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/farmer-dashboard" element={<FarmerDashboard />} />
+        <Route path="/add-harvest" element={<AddHarvestData />} />
+        <Route path="/vendor-registration" element={<VendorRegistrationForm />} />
+        <Route path="/consumer-dashboard" element={<ConsumerDashboard />} />
+        <Route path="/vendor-dashboard" element={<VendorDashboard />} />    
+        {/* Add other routes here */}
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
