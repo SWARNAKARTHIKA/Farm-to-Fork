@@ -33,8 +33,19 @@ const Login = () => {
       alert(result.message);
 
       if (result.success) {
-        navigate('/farmer-dashboard');
+
+        const role = result.role?.toLowerCase(); // safely get and lowercase the role
+        if (role === 'farmer') {
+          navigate('/farmer-dashboard');
+        } else if (role === 'vendor') {
+          navigate('/vendor-dashboard');
+        } else if (role === 'consumer') {
+          navigate('/consumer-dashboard');
+        } else {
+          alert('Unknown user role!');
+        }
       }
+      
     } catch (err) {
       alert('Login failed!');
       console.error('Login error:', err);
