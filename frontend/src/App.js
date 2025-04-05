@@ -4,9 +4,12 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import FarmerDashboard from './pages/FarmerDashboard';
 import AddHarvestData from './pages/AddHarvestData'; 
-import VendorRegistrationForm from './pages/VendorRegistrationForm';
+import VendorRegistrationForm from './pages/VendorRegistrationForm'
+import ConsumerDashboard from './pages/ConsumerDashboard';
+import VendorDashboard from './pages/VendorDashboard';
+import BASE_URL from './config'; 
 
-const Home = () => {
+const Home = () => {  
   const navigate = useNavigate();
 
   return (
@@ -80,6 +83,10 @@ function App() {
         <Route path="/farmer-dashboard" element={<FarmerDashboard />} />
         <Route path="/add-harvest" element={<AddHarvestData />} />
         <Route path="/vendor-registration" element={<VendorRegistrationForm />} />
+
+        <Route path="/consumer-dashboard" element={<ConsumerDashboard />} />
+        <Route path="/vendor-dashboard" element={<VendorDashboard />} />    
+
         {/* Add other routes here */}
       </Routes>
     </Router>
