@@ -113,6 +113,38 @@ def login():
             return jsonify({"message": f"Authentication failed: {str(e)}"}), 400
     else:
         return jsonify({"message": "Invalid username or password"}), 401
+@app.route('/api/register_vendor', methods=['POST'])
+def register_vendor():
+    try:
+        # Get form data from the request
+        data = request.get_json()
 
+        # Create the vendor data
+        vendor = {
+            'vendorName': data['vendorName'],
+            'contactPerson': data['contactPerson'],
+            'phone': data['phone'],
+            'vendorType': data['vendorType'],
+            'baseLocation': data['baseLocation'],
+            'serviceArea': data['serviceArea'],
+            'cropsAccepted': data['cropsAccepted'],
+            'minQty': data['minQty'],
+            'maxQty': data['maxQty'],
+            'pickup': data['pickup'],
+            'storageType': data['storageType'],
+            'storageCapacity': data['storageCapacity'],
+            'advancePayment': data['advancePayment'],
+            'pricingType': data['pricingType'],
+            'grading': data['grading'],
+            'packagingTesting': data['packagingTesting'],
+        }
+
+        # Add vendor data to Firestore
+        db.collection('vendor_details').add(vendor)
+
+        return jsonify({"message": "Vendor registered successfully!"}), 200
+    except Exception as e:
+        return jsonify({"message": f"Error occurred: {str(e)}"}), 500
+        
 if __name__ == '__main__':
     app.run(debug=True)
