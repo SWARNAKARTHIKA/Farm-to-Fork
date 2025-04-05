@@ -97,7 +97,7 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    # Retrieve user from Firestore by username
+    # Retrieve user from Firestore by username and password
     users_ref = db.collection('users')
     query = users_ref.where('username', '==', username).where('password', '==', password).limit(1)
     results = query.stream()
@@ -107,15 +107,20 @@ def login():
         user = doc.to_dict()
 
     if user:
-        # If user is found, authenticate using Firebase Admin SDK
         try:
-            # In a real scenario, you would use Firebase Authentication to verify credentials
-            # Here, we simulate it by assuming the user is valid if they exist in Firestore.
-            return jsonify({"message": "Login successful!", "user": user})
+            # Extract role from user document
+            role = user.get('role', 'unknown').lower()
+            return jsonify({
+                "success": True,
+                "message": "Login successful!",
+                "role": role,
+                "username": user.get('username')  # optional: you can return more info
+            })
         except Exception as e:
-            return jsonify({"message": f"Authentication failed: {str(e)}"}), 400
+            return jsonify({"success": False, "message": f"Authentication failed: {str(e)}"}), 400
     else:
-        return jsonify({"message": "Invalid username or password"}), 401
+        return jsonify({"success": False, "message": "Invalid username or password"}), 401
+
 @app.route('/api/register_vendor', methods=['POST'])
 def register_vendor():
     try:
