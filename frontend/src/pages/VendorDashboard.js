@@ -267,3 +267,4 @@ const closeButtonStyle = {
 };
 
 export default VendorDashboard;
+
