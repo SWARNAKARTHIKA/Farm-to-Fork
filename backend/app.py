@@ -175,5 +175,72 @@ def select_vendor():
     except Exception as e:
         return jsonify({"message": f"Failed to fetch vendor data: {str(e)}"}), 500
 
+@app.route('/available_tokens', methods=['GET'])
+def available_tokens():
+    tokens_ref = db.collection('crops').stream()
+    available = []
+    for doc in tokens_ref:
+        data = doc.to_dict()
+        # Attach document ID as tokenId for frontend tracking
+        data['tokenId'] = doc.id
+        # Rename fields to match frontend keys
+        available.append({
+            'cropType': data.get('crop_type'),
+            'variety': data.get('variety'),
+            'sowingDate': data.get('sowing_date'),
+            'harvestDate': data.get('expected_harvest_date'),
+            'landArea': data.get('total_land_area'),
+            'expectedYield': data.get('expected_yield'),
+            'irrigationSource': data.get('irrigation_source'),
+            'fertilizerUse': data.get('fertilizer_pesticide_use'),
+            'tokenQty': int(data.get('token_quantity_kg', 0)),
+            'tokenPrice': float(data.get('token_price_per_kg', 0)),
+            'minQty': int(data.get('min_purchase_quantity', 1)),
+            'tokenId': doc.id
+        })
+    return jsonify(available)
+@app.route('/buy_token', methods=['POST'])
+def buy_token():
+    data = request.get_json()
+    token_id = data.get('tokenId')
+    quantity = int(data.get('tokenQty'))  # changed from 'quantity' to 'tokenQty'
+
+    crop_ref = db.collection('crops').document(token_id)
+    crop_doc = crop_ref.get()
+
+    if not crop_doc.exists:
+        return jsonify({'error': 'Token not found'}), 404
+
+    crop_data = crop_doc.to_dict()
+    available_qty = int(crop_data.get('token_quantity_kg', 0))
+
+    if quantity > available_qty:
+        return jsonify({'error': 'Not enough tokens available'}), 400
+
+    # Subtract purchased tokens
+    crop_ref.update({'token_quantity_kg': available_qty - quantity})
+
+    # Add to user's token collection (assuming static user for now)
+    buyer_token_data = {
+        'cropType': crop_data.get('crop_type'),
+        'variety': crop_data.get('variety'),
+        'sowingDate': crop_data.get('sowing_date'),
+        'harvestDate': crop_data.get('expected_harvest_date'),
+        'landArea': crop_data.get('total_land_area'),
+        'expectedYield': crop_data.get('expected_yield'),
+        'irrigationSource': crop_data.get('irrigation_source'),
+        'fertilizerUse': crop_data.get('fertilizer_pesticide_use'),
+        'tokenQty': quantity,
+        'tokenPrice': crop_data.get('token_price_per_kg'),
+        'minQty': crop_data.get('min_purchase_quantity'),
+        'tokenId': token_id
+    }
+
+    db.collection('my_tokens').add(buyer_token_data)
+
+    return jsonify({'message': f'Successfully bought {quantity} tokens'})
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
