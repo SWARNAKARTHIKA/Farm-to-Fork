@@ -157,8 +157,8 @@ def register_vendor():
 @app.route('/select_vendor', methods=['GET'])
 def select_vendor():
     try:
-        # Optional: filter vendors who offer pickup service
-        vendors_ref = db.collection('vendor_details').where('pickup', '==', True)
+        # Fetch all vendors or filter based on pickup service
+        vendors_ref = db.collection('vendor_details')  # You can remove `.where` for all vendors
         docs = vendors_ref.stream()
 
         vendors = []
@@ -167,8 +167,13 @@ def select_vendor():
             data['id'] = doc.id  # optional: include Firestore document ID
             vendors.append(data)
 
+        # Check if vendors list is empty
+        if not vendors:
+            return jsonify({"message": "No vendors found"}), 200
+
         return jsonify({"vendors": vendors}), 200
     except Exception as e:
         return jsonify({"message": f"Failed to fetch vendor data: {str(e)}"}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)
