@@ -203,8 +203,9 @@ def available_tokens():
 def buy_token():
     data = request.get_json()
     token_id = data.get('tokenId')
-    qty = int(data.get('tokenQty'))  # quantity coming from frontend as 'tokenQty'
+    user_qty = int(data.get('tokenQty'))  # Quantity user wants to buy
 
+    # Fetch crop document
     crop_ref = db.collection('crops').document(token_id)
     crop_doc = crop_ref.get()
 
@@ -212,15 +213,15 @@ def buy_token():
         return jsonify({'error': 'Token not found'}), 404
 
     crop_data = crop_doc.to_dict()
-    available_qty = int(crop_data.get('token_quantity_kg', 0))
+    available_qty = int(crop_data.get('token_quantity_kg', 0))  # Available tokens
 
-    if qty > available_qty:
+    if user_qty > available_qty:
         return jsonify({'error': 'Not enough tokens available'}), 400
 
-    # Subtract purchased tokens
-    crop_ref.update({'token_quantity_kg': available_qty - qty})
+    # Update the available quantity in Firestore
+    crop_ref.update({'token_quantity_kg': available_qty - user_qty})
 
-    # Add to user's token collection (static user for now)
+    # Save purchase data with both quantities: available & purchased
     buyer_token_data = {
         'cropType': crop_data.get('crop_type'),
         'variety': crop_data.get('variety'),
@@ -230,7 +231,8 @@ def buy_token():
         'expectedYield': crop_data.get('expected_yield'),
         'irrigationSource': crop_data.get('irrigation_source'),
         'fertilizerUse': crop_data.get('fertilizer_pesticide_use'),
-        'tokenQty': qty,
+        'tokenQtyAvailable': available_qty,      # This is the total available before purchase
+        'userPurchaseQty': user_qty,             # This is how much the user bought
         'tokenPrice': crop_data.get('token_price_per_kg'),
         'minQty': crop_data.get('min_purchase_quantity'),
         'tokenId': token_id
@@ -238,7 +240,7 @@ def buy_token():
 
     db.collection('user_tokens').add(buyer_token_data)
 
-    return jsonify({'message': f'Successfully bought {quantity} tokens for {token_id}'}), 200
+    return jsonify({'message': f'Successfully bought {user_qty} tokens for {token_id}'}), 200
 
 
 
