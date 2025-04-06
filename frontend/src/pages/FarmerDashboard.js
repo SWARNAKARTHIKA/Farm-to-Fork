@@ -45,6 +45,8 @@ const FarmerDashboard = () => {
   const handleCardClick = (index) => {
     if (index === 0) {
       navigate('/add-harvest');
+    } else if (index === 1) {
+      navigate('/farmer-token-details'); // Navigate to Token Details Page
     } else if (index === 3) {
       navigate('/vendor-list');
     }
@@ -52,7 +54,7 @@ const FarmerDashboard = () => {
 
   const cardTexts = [
     'Add Harvest Data',
-    'Update Yield Info',
+    'View Token Details',
     'View My Harvests',
     'Vendors List',
   ];

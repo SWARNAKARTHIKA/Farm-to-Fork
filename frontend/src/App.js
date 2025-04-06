@@ -11,6 +11,7 @@ import BASE_URL from './config'; // Make sure BASE_URL is correctly defined in t
 import VendorList from './pages/VendorList';
 import ChatRoom from './pages/ChatRoom';
 import UpdateHarvest from './pages/UpdateHarvest';
+import FarmerTokenDetails from './pages/FarmTokenDetails';
 
 const Home = () => {  
   const navigate = useNavigate();
@@ -91,6 +92,7 @@ function App() {
         <Route path="/vendor-list" element={<VendorList />} />
         <Route path="/chat-room" element={<ChatRoom />} />
         <Route path="/update-harvest" element={<UpdateHarvest />} />
+        <Route path="/farmer-token-details" element={<FarmerTokenDetails />} />
         {/* Add other routes here */}
       </Routes>
     </Router>
