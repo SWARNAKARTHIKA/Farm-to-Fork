@@ -4,20 +4,49 @@ import { useNavigate } from 'react-router-dom';
 
 const FarmerDashboard = () => {
   const navigate = useNavigate();
+  
+  // State for storing image and text
+  const [image, setImage] = useState(null);
+  const [text, setText] = useState('');
+  const [submittedData, setSubmittedData] = useState([]); // To store uploaded data
 
-  const [submittedData, setSubmittedData] = useState([
-    // Example data
-    { image: 'https://via.placeholder.com/150', text: 'Harvest 1', date: '2023-04-06' },
-    { image: 'https://via.placeholder.com/150', text: 'Harvest 2', date: '2023-04-05' },
-  ]);
+  // Handle image change
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Handle text input change
+  const handleTextChange = (e) => {
+    setText(e.target.value);
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (text && image) {
+      const newEntry = {
+        image,
+        text,
+        date: new Date().toLocaleDateString(),
+      };
+      setSubmittedData([newEntry, ...submittedData]);
+      setImage(null);
+      setText('');
+    }
+  };
 
   const handleCardClick = (index) => {
     if (index === 0) {
       navigate('/add-harvest');
     } else if (index === 3) {
       navigate('/vendor-list');
-    } else if (index === 2) {
-      navigate('/harvest-details', { state: submittedData[index] }); // Pass data for harvest details
     }
   };
 
@@ -71,6 +100,32 @@ const FarmerDashboard = () => {
         ))}
       </div>
 
+      {/* Image and Text Upload Form */}
+      <div style={{ marginTop: '40px' }}>
+        <h2 style={{ color: '#2f855a', fontSize: '1.8rem', marginBottom: '20px' }}>Upload Your Harvest Data</h2>
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '20px' }}>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ padding: '10px', width: '100%' }}
+            />
+          </div>
+          <div style={{ marginBottom: '20px' }}>
+            <textarea
+              value={text}
+              onChange={handleTextChange}
+              placeholder="Enter your harvest description..."
+              style={{ width: '100%', padding: '10px', height: '100px' }}
+            />
+          </div>
+          <button type="submit" style={{ padding: '10px 20px', backgroundColor: '#38a169', color: 'white', border: 'none', borderRadius: '8px' }}>
+            Upload Data
+          </button>
+        </form>
+      </div>
+
       {/* Display Submitted Data */}
       <div style={{ marginTop: '40px' }}>
         <h2 style={{ color: '#2f855a', fontSize: '1.8rem', marginBottom: '20px' }}>Your Uploaded Harvests</h2>
@@ -83,19 +138,6 @@ const FarmerDashboard = () => {
             />
             <p style={{ fontSize: '1rem', fontWeight: 'bold', color: '#2f855a' }}>{entry.text}</p>
             <p style={{ fontSize: '0.9rem', color: '#718096' }}>{entry.date}</p>
-            <button
-              onClick={() => handleCardClick(2)}
-              style={{
-                backgroundColor: '#38a169',
-                color: 'white',
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-              }}
-            >
-              Update Harvest
-            </button>
           </div>
         ))}
       </div>
