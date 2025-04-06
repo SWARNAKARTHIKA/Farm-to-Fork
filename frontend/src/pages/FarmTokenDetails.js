@@ -13,9 +13,9 @@ const FarmerTokenDetails = () => {
   };
 
   const customerInfo = {
-    name: 'John Doe',
+    name: 'nachi',
     contact: '9876543210',
-    address: '123 Main St, Springfield',
+    address: 'chennai',
   };
 
   const totalPrice = 50;
