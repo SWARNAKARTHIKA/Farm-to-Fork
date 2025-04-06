@@ -16,7 +16,7 @@ const FarmerDashboard = () => {
     'Add Harvest Data',
     'Update Yield Info',
     'View My Harvests',
-    'Connect with Vendors'
+    'Vendors List'
   ];
 
   return (

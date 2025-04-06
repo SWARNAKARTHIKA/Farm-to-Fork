@@ -55,6 +55,24 @@ const ConsumerDashboard = () => {
     }
   };
 
+  // Function to render token data only if the value is not empty or 'N/A'
+  const renderTokenDetails = (token) => {
+    return Object.keys(token).map((key) => {
+      const value = token[key];
+      if (value && value !== 'N/A') {
+        return (
+          <p key={key}><strong>{capitalizeFirstLetter(key.replace(/_/g, ' '))}:</strong> {value}</p>
+        );
+      }
+      return null; // Skip rendering if the value is empty or 'N/A'
+    });
+  };
+
+  // Helper function to capitalize first letter of the string
+  const capitalizeFirstLetter = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
   return (
     <div style={{ padding: '30px', height: '100%', boxSizing: 'border-box', backgroundColor: '#f0fdf4' }}>
       {/* Header */}
@@ -81,17 +99,7 @@ const ConsumerDashboard = () => {
                 }}
               >
                 <div style={{ textAlign: 'left' }}>
-                  <p><strong>Crop Type:</strong> {token.cropType || 'N/A'}</p>
-                  <p><strong>Variety:</strong> {token.variety || 'N/A'}</p>
-                  <p><strong>Sowing Date:</strong> {token.sowingDate || 'N/A'}</p>
-                  <p><strong>Harvest Date:</strong> {token.harvestDate || 'N/A'}</p>
-                  <p><strong>Land Area:</strong> {token.landArea || 'N/A'} acres</p>
-                  <p><strong>Expected Yield:</strong> {token.expectedYield || 'N/A'} tons</p>
-                  <p><strong>Irrigation:</strong> {token.irrigationSource || 'N/A'}</p>
-                  <p><strong>Fertilizer:</strong> {token.fertilizerUse || 'N/A'}</p>
-                  <p><strong>Token Qty:</strong> {token.tokenQty || 'N/A'}</p>
-                  <p><strong>Token Price:</strong> ₹{token.tokenPrice || 'N/A'}</p>
-                  <p><strong>Min Qty:</strong> {token.minQty || 'N/A'}</p>
+                  {renderTokenDetails(token)}
 
                   {/* Quantity Selection */}
                   <div style={{ marginTop: '10px' }}>
@@ -155,17 +163,7 @@ const ConsumerDashboard = () => {
                 }}
               >
                 <div style={{ textAlign: 'left' }}>
-                  <p><strong>Crop Type:</strong> {token.cropType || 'N/A'}</p>
-                  <p><strong>Variety:</strong> {token.variety || 'N/A'}</p>
-                  <p><strong>Sowing Date:</strong> {token.sowingDate || 'N/A'}</p>
-                  <p><strong>Harvest Date:</strong> {token.harvestDate || 'N/A'}</p>
-                  <p><strong>Land Area:</strong> {token.landArea || 'N/A'} acres</p>
-                  <p><strong>Expected Yield:</strong> {token.expectedYield || 'N/A'} tons</p>
-                  <p><strong>Irrigation:</strong> {token.irrigationSource || 'N/A'}</p>
-                  <p><strong>Fertilizer:</strong> {token.fertilizerUse || 'N/A'}</p>
-                  <p><strong>Token Qty:</strong> {token.tokenQty || 'N/A'}</p>
-                  <p><strong>Token Price:</strong> ₹{token.tokenPrice || 'N/A'}</p>
-                  <p><strong>Min Qty:</strong> {token.minQty || 'N/A'}</p>
+                  {renderTokenDetails(token)}
                 </div>
               </div>
             ))

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import VendorList from './VendorList';  // Ensure VendorList is imported correctly
 
 const AddHarvestData = () => {
   const [form, setForm] = useState({
@@ -17,6 +18,8 @@ const AddHarvestData = () => {
     landRecord: null,
     fieldPhoto: null,
   });
+  const [showVendors, setShowVendors] = useState(false); // State to control vendor list visibility
+  const [filteredVendors, setFilteredVendors] = useState([]);  // State for filtered vendors
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -27,8 +30,27 @@ const AddHarvestData = () => {
     }
   };
 
+  // Fetch vendors based on cropType
+  const fetchVendors = async (cropType) => {
+    if (!cropType) return;  // Skip if no cropType is provided
+    
+    try {
+      const res = await fetch(`https://your-api-url.com/vendors?cropType=${cropType}`);
+      const result = await res.json();
+      setFilteredVendors(result);
+    } catch (err) {
+      console.error('Error fetching vendors:', err);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic Validation: Ensure fields are filled (you can extend this based on requirements)
+    if (!form.cropType || !form.variety || !form.sowingDate || !form.harvestDate) {
+      alert('Please fill in all required fields.');
+      return;
+    }
 
     const formData = new FormData();
     formData.append('crop_type', form.cropType);
@@ -45,9 +67,7 @@ const AddHarvestData = () => {
     formData.append('min_purchase_quantity', form.minQty);
     formData.append('land_record', form.landRecord);
     formData.append('field_photo', form.fieldPhoto);
-    for (let pair of formData.entries()) {
-        console.log(`${pair[0]}:`, pair[1]);
-      }
+
     try {
       const res = await fetch('https://farm-to-fork-30r2.onrender.com/register', {
         method: 'POST',
@@ -62,6 +82,13 @@ const AddHarvestData = () => {
       alert('❌ Error submitting data.');
     }
   };
+
+  // Show vendors when the cropType is selected
+  useEffect(() => {
+    if (form.cropType) {
+      fetchVendors(form.cropType);  // Fetch vendors based on crop type
+    }
+  }, [form.cropType]);
 
   return (
     <div style={{ maxWidth: '1200px', margin: '30px auto', padding: '20px' }}>
@@ -105,19 +132,81 @@ const AddHarvestData = () => {
             <div style={fieldStyle}>Field Photo: <input name="fieldPhoto" style={inputStyle} type="file" onChange={handleChange} /></div>
             <div style={fieldStyle}>ID Proof: <span style={{ color: '#999' }}>Already collected</span></div>
           </div>
+
+          {/* Vendor Button */}
+          <div style={boxStyle}>
+            <button
+              type="button"
+              onClick={() => setShowVendors(!showVendors)} // Toggle vendor list visibility
+              style={{
+                backgroundColor: '#276749',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                marginTop: '20px',
+                width: '100%',
+              }}
+            >
+              Suggested Vendors
+            </button>
+          </div>
         </div>
 
+        {/* Show Vendor List Modal */}
+        {showVendors && (
+          <div
+            onClick={() => setShowVendors(false)}  // Close on outside click
+            style={{
+              position: 'fixed',
+              top: '0',
+              left: '0',
+              right: '0',
+              bottom: '0',
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+              style={{
+                backgroundColor: 'white',
+                padding: '20px',
+                borderRadius: '10px',
+                width: '80%',
+                maxHeight: '80%',
+                overflowY: 'scroll',
+              }}
+            >
+              <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Suggested Vendors</h2>
+              <VendorList vendors={filteredVendors} /> {/* The component displaying the vendors */}
+              <button
+                type="button"
+                onClick={() => setShowVendors(false)}
+                style={{
+                  backgroundColor: '#FF6347',
+                  color: 'white',
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  width: '100%',
+                  marginTop: '20px',
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
         <div style={{ textAlign: 'center' }}>
-          <button type="submit" style={{
-            marginTop: '30px',
-            padding: '12px 24px',
-            backgroundColor: '#276749',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-          }}>
+          <button type="submit" style={submitButtonStyle}>
             Submit Harvest Data
           </button>
         </div>
@@ -126,7 +215,7 @@ const AddHarvestData = () => {
   );
 };
 
-// Styles
+// Styles (can be moved to an external CSS file for better maintainability)
 const boxStyle = {
   flex: '1 1 45%',
   backgroundColor: '#e6f4ea',
@@ -153,6 +242,17 @@ const inputStyle = {
   padding: '8px',
   borderRadius: '6px',
   border: '1px solid #ccc',
+};
+
+const submitButtonStyle = {
+  marginTop: '30px',
+  padding: '12px 24px',
+  backgroundColor: '#276749',
+  color: 'white',
+  border: 'none',
+  borderRadius: '8px',
+  cursor: 'pointer',
+  fontWeight: 'bold',
 };
 
 export default AddHarvestData;
