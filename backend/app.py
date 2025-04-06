@@ -203,7 +203,7 @@ def available_tokens():
 def buy_token():
     data = request.get_json()
     token_id = data.get('tokenId')
-    quantity = int(data.get('tokenQty'))  # changed from 'quantity' to 'tokenQty'
+    quantity = int(data.get('tokenQty'))  # quantity coming from frontend as 'tokenQty'
 
     crop_ref = db.collection('crops').document(token_id)
     crop_doc = crop_ref.get()
@@ -220,7 +220,7 @@ def buy_token():
     # Subtract purchased tokens
     crop_ref.update({'token_quantity_kg': available_qty - quantity})
 
-    # Add to user's token collection (assuming static user for now)
+    # Add to user's token collection (static user for now)
     buyer_token_data = {
         'cropType': crop_data.get('crop_type'),
         'variety': crop_data.get('variety'),
@@ -236,9 +236,9 @@ def buy_token():
         'tokenId': token_id
     }
 
-    db.collection('my_tokens').add(buyer_token_data)
+    db.collection('user_tokens').add(buyer_token_data)
 
-    return jsonify({'message': f'Successfully bought {quantity} tokens'})
+    return jsonify({'message': f'Successfully bought {quantity} tokens for {token_id}'}), 200
 
 
 
