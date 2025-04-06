@@ -251,12 +251,8 @@ def get_user_tokens():
         tokens = []
         for doc in tokens_ref:
             data = doc.to_dict()
-            tokens.append({
-                'tokenId': doc.id,
-                'cropType': data.get('cropType'),
-                'harvestDate': data.get('harvestDate'),
-                'userPurchaseQty': data.get('userPurchaseQty')
-            })
+            data['tokenId'] = doc.id  # Include the document ID if needed
+            tokens.append(data)
 
         if not tokens:
             return jsonify({'message': 'No tokens purchased yet'}), 200
@@ -264,7 +260,6 @@ def get_user_tokens():
         return jsonify(tokens), 200
     except Exception as e:
         return jsonify({'error': f'Failed to fetch purchased tokens: {str(e)}'}), 500
-
 
 
 if __name__ == '__main__':
