@@ -1,50 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
-import BASE_URL from './config'; // Update path if needed
+import BASE_URL from './config';
 
 const ConsumerDashboard = () => {
   const [availableTokens, setAvailableTokens] = useState([]);
   const [myTokens, setMyTokens] = useState([]);
-  const [quantities, setQuantities] = useState({}); // Track quantities for each token
+  const [quantities, setQuantities] = useState({});
 
   useEffect(() => {
-    // Fetch Available Tokens
     fetch(`${BASE_URL}/available_tokens`)
       .then(res => res.json())
       .then(data => setAvailableTokens(data))
       .catch(err => console.error('Error fetching available tokens:', err));
 
-    // Fetch Your Tokens
-    fetch(`${BASE_URL}/my_tokens`)
+    fetch(`${BASE_URL}/user_tokens`)
       .then(res => res.json())
       .then(data => setMyTokens(data))
       .catch(err => console.error('Error fetching your tokens:', err));
   }, []);
 
-  // Handle quantity change for a token
-  const handleQuantityChange = (tokenId, event) => {
+  const handleQuantityChange = (index, event) => {
     setQuantities({
       ...quantities,
-      [tokenId]: event.target.value,
+      [index]: event.target.value,
     });
   };
 
-  // Handle Buy button click
-  const handleBuyClick = (tokenId) => {
-    const quantity = quantities[tokenId];
+  const handleBuyClick = (index) => {
+    const quantity = quantities[index];
     if (quantity && quantity > 0) {
-      // Trigger buy API call here (example API endpoint: /buy_token)
       fetch(`${BASE_URL}/buy_token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ tokenId, quantity }),
+        body: JSON.stringify({ tokenQty: quantity }),
       })
         .then(res => res.json())
         .then(data => {
           alert(`Successfully bought ${quantity} tokens!`);
-          // Optionally update the state (availableTokens, myTokens, etc.) after the purchase
         })
         .catch(err => {
           console.error('Error buying token:', err);
@@ -55,27 +49,8 @@ const ConsumerDashboard = () => {
     }
   };
 
-  // Function to render token data only if the value is not empty or 'N/A'
-  const renderTokenDetails = (token) => {
-    return Object.keys(token).map((key) => {
-      const value = token[key];
-      if (value && value !== 'N/A') {
-        return (
-          <p key={key}><strong>{capitalizeFirstLetter(key.replace(/_/g, ' '))}:</strong> {value}</p>
-        );
-      }
-      return null; // Skip rendering if the value is empty or 'N/A'
-    });
-  };
-
-  // Helper function to capitalize first letter of the string
-  const capitalizeFirstLetter = (str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-
   return (
-    <div style={{ padding: '30px', height: '100%', boxSizing: 'border-box', backgroundColor: '#f0fdf4' }}>
-      {/* Header */}
+    <div style={{ padding: '30px', backgroundColor: '#f0fdf4' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <h1 style={{ fontSize: '2.5rem', color: '#2f855a', fontWeight: 'bold' }}>Welcome, Consumer</h1>
         <FaUserCircle size={50} color="#2f855a" />
@@ -99,18 +74,28 @@ const ConsumerDashboard = () => {
                 }}
               >
                 <div style={{ textAlign: 'left' }}>
-                  {renderTokenDetails(token)}
+                  <p><strong>Crop Type:</strong> {token.cropType || 'N/A'}</p>
+                  <p><strong>Variety:</strong> {token.variety || 'N/A'}</p>
+                  <p><strong>Sowing Date:</strong> {token.sowingDate || 'N/A'}</p>
+                  <p><strong>Harvest Date:</strong> {token.harvestDate || 'N/A'}</p>
+                  <p><strong>Land Area:</strong> {token.landArea || 'N/A'} acres</p>
+                  <p><strong>Expected Yield:</strong> {token.expectedYield || 'N/A'} tons</p>
+                  <p><strong>Irrigation:</strong> {token.irrigationSource || 'N/A'}</p>
+                  <p><strong>Fertilizer:</strong> {token.fertilizerUse || 'N/A'}</p>
+                  <p><strong>Token Qty:</strong> {token.tokenQty || 'N/A'}</p>
+                  <p><strong>Token Price:</strong> ₹{token.tokenPrice || 'N/A'}</p>
+                  <p><strong>Min Qty:</strong> {token.minQty || 'N/A'}</p>
 
                   {/* Quantity Selection */}
                   <div style={{ marginTop: '10px' }}>
-                    <label htmlFor={`quantity-${token.tokenId}`} style={{ marginRight: '10px' }}>Quantity:</label>
+                    <label htmlFor={`quantity-${index}`} style={{ marginRight: '10px' }}>Quantity:</label>
                     <input
                       type="number"
-                      id={`quantity-${token.tokenId}`}
+                      id={`quantity-${index}`}
                       min={token.minQty || 1}
                       max={token.tokenQty || 100}
-                      value={quantities[token.tokenId] || 0}
-                      onChange={(e) => handleQuantityChange(token.tokenId, e)}
+                      value={quantities[index] || 0}
+                      onChange={(e) => handleQuantityChange(index, e)}
                       style={{
                         padding: '5px',
                         borderRadius: '5px',
@@ -122,7 +107,7 @@ const ConsumerDashboard = () => {
 
                   {/* Buy Button */}
                   <button
-                    onClick={() => handleBuyClick(token.tokenId)}
+                    onClick={() => handleBuyClick(index)}
                     style={{
                       marginTop: '10px',
                       padding: '10px 15px',
@@ -163,7 +148,17 @@ const ConsumerDashboard = () => {
                 }}
               >
                 <div style={{ textAlign: 'left' }}>
-                  {renderTokenDetails(token)}
+                  <p><strong>Crop Type:</strong> {token.cropType || 'N/A'}</p>
+                  <p><strong>Variety:</strong> {token.variety || 'N/A'}</p>
+                  <p><strong>Sowing Date:</strong> {token.sowingDate || 'N/A'}</p>
+                  <p><strong>Harvest Date:</strong> {token.harvestDate || 'N/A'}</p>
+                  <p><strong>Land Area:</strong> {token.landArea || 'N/A'} acres</p>
+                  <p><strong>Expected Yield:</strong> {token.expectedYield || 'N/A'} tons</p>
+                  <p><strong>Irrigation:</strong> {token.irrigationSource || 'N/A'}</p>
+                  <p><strong>Fertilizer:</strong> {token.fertilizerUse || 'N/A'}</p>
+                  <p><strong>Token Qty:</strong> {token.tokenQty || 'N/A'}</p>
+                  <p><strong>Token Price:</strong> ₹{token.tokenPrice || 'N/A'}</p>
+                  <p><strong>Min Qty:</strong> {token.minQty || 'N/A'}</p>
                 </div>
               </div>
             ))

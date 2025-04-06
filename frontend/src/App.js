@@ -9,6 +9,7 @@ import ConsumerDashboard from './pages/ConsumerDashboard';
 import VendorDashboard from './pages/VendorDashboard';
 import BASE_URL from './config'; // Make sure BASE_URL is correctly defined in this file
 import VendorList from './pages/VendorList';
+import ChatRoom from './pages/ChatRoom';
 
 const Home = () => {  
   const navigate = useNavigate();
@@ -87,6 +88,7 @@ function App() {
         <Route path="/consumer-dashboard" element={<ConsumerDashboard />} />
         <Route path="/vendor-dashboard" element={<VendorDashboard />} />    
         <Route path="/vendor-list" element={<VendorList />} />
+        <Route path="/chat-room" element={<ChatRoom />} />
         {/* Add other routes here */}
       </Routes>
     </Router>
