@@ -243,6 +243,27 @@ def buy_token():
     return jsonify({'message': f'Successfully bought {user_qty} tokens'}), 200
 
 
+@app.route('/user_tokens', methods=['GET'])
+def get_user_tokens():
+    try:
+        tokens_ref = db.collection('user_tokens').stream()
+
+        tokens = []
+        for doc in tokens_ref:
+            data = doc.to_dict()
+            tokens.append({
+                'tokenId': doc.id,
+                'cropType': data.get('cropType'),
+                'harvestDate': data.get('harvestDate'),
+                'userPurchaseQty': data.get('userPurchaseQty')
+            })
+
+        if not tokens:
+            return jsonify({'message': 'No tokens purchased yet'}), 200
+
+        return jsonify(tokens), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch purchased tokens: {str(e)}'}), 500
 
 
 
