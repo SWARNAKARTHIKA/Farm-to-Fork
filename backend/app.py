@@ -203,7 +203,7 @@ def available_tokens():
 def buy_token():
     data = request.get_json()
     token_id = data.get('tokenId')
-    quantity = int(data.get('tokenQty'))  # quantity coming from frontend as 'tokenQty'
+    qty = int(data.get('tokenQty'))  # quantity coming from frontend as 'tokenQty'
 
     crop_ref = db.collection('crops').document(token_id)
     crop_doc = crop_ref.get()
@@ -214,11 +214,11 @@ def buy_token():
     crop_data = crop_doc.to_dict()
     available_qty = int(crop_data.get('token_quantity_kg', 0))
 
-    if quantity > available_qty:
+    if qty > available_qty:
         return jsonify({'error': 'Not enough tokens available'}), 400
 
     # Subtract purchased tokens
-    crop_ref.update({'token_quantity_kg': available_qty - quantity})
+    crop_ref.update({'token_quantity_kg': available_qty - qty})
 
     # Add to user's token collection (static user for now)
     buyer_token_data = {
@@ -230,7 +230,7 @@ def buy_token():
         'expectedYield': crop_data.get('expected_yield'),
         'irrigationSource': crop_data.get('irrigation_source'),
         'fertilizerUse': crop_data.get('fertilizer_pesticide_use'),
-        'tokenQty': quantity,
+        'tokenQty': qty,
         'tokenPrice': crop_data.get('token_price_per_kg'),
         'minQty': crop_data.get('min_purchase_quantity'),
         'tokenId': token_id
