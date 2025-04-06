@@ -1,22 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const FarmerDashboard = () => {
   const navigate = useNavigate();
 
- const handleCardClick = (index) => {
+  const [submittedData, setSubmittedData] = useState([
+    // Example data
+    { image: 'https://via.placeholder.com/150', text: 'Harvest 1', date: '2023-04-06' },
+    { image: 'https://via.placeholder.com/150', text: 'Harvest 2', date: '2023-04-05' },
+  ]);
+
+  const handleCardClick = (index) => {
     if (index === 0) {
       navigate('/add-harvest');
     } else if (index === 3) {
-      navigate('/vendor-list'); // 🔗 Route to VendorList page
+      navigate('/vendor-list');
+    } else if (index === 2) {
+      navigate('/harvest-details', { state: submittedData[index] }); // Pass data for harvest details
     }
   };
+
   const cardTexts = [
     'Add Harvest Data',
     'Update Yield Info',
     'View My Harvests',
-    'Vendors List'
+    'Vendors List',
   ];
 
   return (
@@ -58,6 +67,35 @@ const FarmerDashboard = () => {
             }}
           >
             {text}
+          </div>
+        ))}
+      </div>
+
+      {/* Display Submitted Data */}
+      <div style={{ marginTop: '40px' }}>
+        <h2 style={{ color: '#2f855a', fontSize: '1.8rem', marginBottom: '20px' }}>Your Uploaded Harvests</h2>
+        {submittedData.map((entry, index) => (
+          <div key={index} style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#e2f7e0', borderRadius: '12px' }}>
+            <img
+              src={entry.image}
+              alt="Uploaded Harvest"
+              style={{ width: '100%', height: 'auto', borderRadius: '8px', marginBottom: '10px' }}
+            />
+            <p style={{ fontSize: '1rem', fontWeight: 'bold', color: '#2f855a' }}>{entry.text}</p>
+            <p style={{ fontSize: '0.9rem', color: '#718096' }}>{entry.date}</p>
+            <button
+              onClick={() => handleCardClick(2)}
+              style={{
+                backgroundColor: '#38a169',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+              }}
+            >
+              Update Harvest
+            </button>
           </div>
         ))}
       </div>

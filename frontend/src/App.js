@@ -10,6 +10,7 @@ import VendorDashboard from './pages/VendorDashboard';
 import BASE_URL from './config'; // Make sure BASE_URL is correctly defined in this file
 import VendorList from './pages/VendorList';
 import ChatRoom from './pages/ChatRoom';
+import UpdateHarvest from './pages/UpdateHarvest';
 
 const Home = () => {  
   const navigate = useNavigate();
@@ -89,6 +90,7 @@ function App() {
         <Route path="/vendor-dashboard" element={<VendorDashboard />} />    
         <Route path="/vendor-list" element={<VendorList />} />
         <Route path="/chat-room" element={<ChatRoom />} />
+        <Route path="/update-harvest" element={<UpdateHarvest />} />
         {/* Add other routes here */}
       </Routes>
     </Router>
