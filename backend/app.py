@@ -261,6 +261,41 @@ def get_user_tokens():
     except Exception as e:
         return jsonify({'error': f'Failed to fetch purchased tokens: {str(e)}'}), 500
 
+@app.route('/harvest_details', methods=['GET'])
+def get_harvest_details():
+    try:
+        harvest_ref = db.collection('harvest').stream()
+        harvest_list = []
+
+        for doc in harvest_ref:
+            data = doc.to_dict()
+            harvest_list.append({
+                'harvestId': doc.id,
+                'crop_type': data.get('crop_type'),
+                'expected_harvest_date': data.get('expected_harvest_date'),
+                'expected_yield': data.get('expected_yield'),
+                'fertilizer_pesticide_use': data.get('fertilizer_pesticide_use'),
+                'field_photo_path': data.get('field_photo_path'),
+                'historical_yield': data.get('historical_yield'),
+                'irrigation_source': data.get('irrigation_source'),
+                'land_record_path': data.get('land_record_path'),
+                'min_purchase_quantity': data.get('min_purchase_quantity'),
+                'sowing_date': data.get('sowing_date'),
+                'token_price_per_kg': data.get('token_price_per_kg'),
+                'token_quantity_kg': data.get('token_quantity_kg'),
+                'total_land_area': data.get('total_land_area'),
+                'variety': data.get('variety')
+            })
+
+        if not harvest_list:
+            return jsonify({'message': 'No harvest details available'}), 200
+
+        return jsonify(harvest_list), 200
+
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch harvest details: {str(e)}'}), 500
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
