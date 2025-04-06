@@ -202,25 +202,27 @@ def available_tokens():
 @app.route('/buy_token', methods=['POST'])
 def buy_token():
     data = request.get_json()
-    token_id = data.get('tokenId')
-    qty = int(data.get('tokenQty'))  # quantity coming from frontend as 'tokenQty'
+    user_qty = int(data.get('tokenQty'))  # Quantity user wants to buy
 
-    crop_ref = db.collection('crops').document(token_id)
-    crop_doc = crop_ref.get()
+    # Fetch the first crop document (you can modify this logic to get 'latest' or 'featured')
+    crops = db.collection('crops').limit(1).get()
 
-    if not crop_doc.exists:
-        return jsonify({'error': 'Token not found'}), 404
+    if not crops:
+        return jsonify({'error': 'No crop tokens available'}), 404
 
+    crop_doc = crops[0]
     crop_data = crop_doc.to_dict()
-    available_qty = int(crop_data.get('token_quantity_kg', 0))
+    available_qty = int(crop_data.get('token_quantity_kg', 0))  # Available tokens
 
-    if qty > available_qty:
+    if user_qty > available_qty:
         return jsonify({'error': 'Not enough tokens available'}), 400
 
-    # Subtract purchased tokens
-    crop_ref.update({'token_quantity_kg': available_qty - qty})
+    # Update the available quantity in Firestore
+    db.collection('crops').document(crop_doc.id).update({
+        'token_quantity_kg': available_qty - user_qty
+    })
 
-    # Add to user's token collection (static user for now)
+    # Save purchase data (no tokenId field)
     buyer_token_data = {
         'cropType': crop_data.get('crop_type'),
         'variety': crop_data.get('variety'),
@@ -230,15 +232,38 @@ def buy_token():
         'expectedYield': crop_data.get('expected_yield'),
         'irrigationSource': crop_data.get('irrigation_source'),
         'fertilizerUse': crop_data.get('fertilizer_pesticide_use'),
-        'tokenQty': qty,
+        'tokenQtyAvailable': available_qty,
+        'userPurchaseQty': user_qty,
         'tokenPrice': crop_data.get('token_price_per_kg'),
-        'minQty': crop_data.get('min_purchase_quantity'),
-        'tokenId': token_id
+        'minQty': crop_data.get('min_purchase_quantity')
     }
 
     db.collection('user_tokens').add(buyer_token_data)
 
-    return jsonify({'message': f'Successfully bought {quantity} tokens for {token_id}'}), 200
+    return jsonify({'message': f'Successfully bought {user_qty} tokens'}), 200
+
+
+@app.route('/user_tokens', methods=['GET'])
+def get_user_tokens():
+    try:
+        tokens_ref = db.collection('user_tokens').stream()
+
+        tokens = []
+        for doc in tokens_ref:
+            data = doc.to_dict()
+            tokens.append({
+                'tokenId': doc.id,
+                'cropType': data.get('cropType'),
+                'harvestDate': data.get('harvestDate'),
+                'userPurchaseQty': data.get('userPurchaseQty')
+            })
+
+        if not tokens:
+            return jsonify({'message': 'No tokens purchased yet'}), 200
+
+        return jsonify(tokens), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch purchased tokens: {str(e)}'}), 500
 
 
 
